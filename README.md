@@ -37,6 +37,13 @@ Tested frameworks include:
 
 Note that this project does not include the compilation environment, such as Node.js, which needs to be installed separately.
 
+## Dataset
+
+Dataset used to evaluate GPTScan in the paper, are the following:
+1. Web3Bugs: [https://github.com/MetaTrustLabs/GPTScan-Web3Bugs](https://github.com/MetaTrustLabs/GPTScan-Web3Bugs)
+2. DefiHacks: [https://github.com/MetaTrustLabs/GPTScan-DefiHacks](https://github.com/MetaTrustLabs/GPTScan-DefiHacks)
+3. Top200: [https://github.com/MetaTrustLabs/GPTScan-Top200](https://github.com/MetaTrustLabs/GPTScan-Top200)
+
 ## How to Cite this project
 
 ```bibtex

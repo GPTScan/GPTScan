@@ -37,6 +37,14 @@ python3.10 main.py -s /sourcecode -o /sourcecode/output.json -k OPEN_AI_API_KEY_
 
 注意，这个项目不包含编译环境，如Node.js等，需要自行安装。
 
+## 数据集
+
+论文中用于评估GPTScan的数据集，如下：
+1. Web3Bugs: [https://github.com/MetaTrustLabs/GPTScan-Web3Bugs](https://github.com/MetaTrustLabs/GPTScan-Web3Bugs)
+2. DefiHacks: [https://github.com/MetaTrustLabs/GPTScan-DefiHacks](https://github.com/MetaTrustLabs/GPTScan-DefiHacks)
+3. Top200: [https://github.com/MetaTrustLabs/GPTScan-Top200](https://github.com/MetaTrustLabs/GPTScan-Top200)
+
+
 ## 如何引用这个项目
 
 ```bibtex
