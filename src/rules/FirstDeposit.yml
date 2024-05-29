@@ -1,0 +1,32 @@
+name: first-deposit
+property:
+  - deposit/mint/add the liquidity pool/amount/share
+  - and set the total share to the number of first deposit when the supply/liquidity is 0
+function_contain_any:
+  - ['total', 'tokenSupply']
+  - ['supply', 'liquidity', 'tokenSupply']
+activate:
+  "yes"
+output:
+  title: "MWE-204: Unsafe First Deposit"
+  description: First depositor can break minting of shares or drain the liquidity of all users.
+  recommendation: When totalSupply() == 0, send the first min liquidity LP tokens to the zero address to enable share dilution.
+static:
+  format: json
+  # if (VariableB == 0)
+  #     VariableA = VariableC  or  mint(VariableC)
+  prompt: |
+    In this function, which variable holds the value of total minted share or amount? Please answer in a section starts with "VariableA:".
+    In this function, which variable or function holds the total supply/liquidity AND is used by the conditional branch to determine the supply/liquidity is 0? Please answer in a section starts with "VariableB:".
+    In this function, which variable or function holds the value of the deposit/mint/add amount? Please answer in a section starts with "VariableC:".
+    Please answer in the following json format: {"VariableA":{"Variable name":"Description"}, "VariableB":{"Variable name":"Description"}, "VariableC":{"Variable name":"Description"}}
+  output_keys:
+    - VariableA
+    - VariableB
+    - VariableC
+  rule:
+    name: first_deposit_check
+    args:
+      - VariableB
+      - VariableC
+      - VariableA

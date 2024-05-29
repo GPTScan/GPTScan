@@ -1,0 +1,35 @@
+name: front-running
+property:
+  - mint or vest or collect token/liquidity/earning and assign them to the address recipient or to variable,
+#  - and there is no safeTransferFrom() in the same function OR have safeTransferFrom() but its from address is from the parameter
+  - and this operation could be front run to benefit the account/address that can be controlled by the parameter and has no sender check in the function code
+functions: # May not need; currently we add it
+  - mint
+  - vest
+  - collect
+function_public: True
+function_parameters:
+  # - address _recipient
+  # - address to
+  # - address user
+  - address
+function_not_inside:
+  - transferFrom(msg.sender
+  - transferFrom(_msgSender
+  - transferFrom(msgSender
+  - REGEX: (if|require)\s*\(.*msg(\.)?(s|S)ender
+  - REGEX: (if|require|assert)\s*\(.*(l|L)ock
+check_only_modifier: True
+activate:
+  "yes"
+output:
+  title: "MWE-205: Front Running"
+  description: Users are required to transfer assets in advance and minting token/liquidity/earning thus could be frontrun.
+  recommendation: Put asset transfering and token minting in the same function to keep atomicity.
+static:
+  format: not_need
+  rule:
+    name: call_arg_check
+    args:
+      - CONSTANT: safeTransferFrom
+      - CONSTANT: msg.sender

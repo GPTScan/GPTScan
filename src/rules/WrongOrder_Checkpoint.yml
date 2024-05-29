@@ -1,0 +1,33 @@
+name: wrong-order-checkpoint
+property:
+  - have inside code statements that invoke user checkpoint,
+  - and have inside code statements that calculate/assigns/distribute the balance/share/stake/fee/loan/reward
+function_inside:
+  - checkpoint
+only_this_function: True
+output:
+  title: "MWE-208: Wrong Order for Checkpoint" 
+  description: Invoking user checkpoint should be executed before calculating new balance, share, stake, loan or fee.
+  recommendation: Check the business logic and move the statements about invoking user checkpoint forward.
+static:
+  format: plain
+  multisteps: True
+  prompt:
+    - In the given code, which inside code statement is the first statement to invoke user checkpoint? Answer only ZERO or ONE statement, cover the code with backquotes.
+    - In the given code, which inside code statement is the first statement to calculate/assign/distribute the balance/share/stake/fee/loan/reward? Answer only ZERO or ONE statement, cover the code with backquotes.
+  output_keys:  
+    - StatementsA
+    - StatementsB
+  rule:
+    name: order_first_b
+    args:
+      - StatementsB
+      - StatementsA
+  filter:
+    StatementsB:
+      - balance
+      - share
+      - stake
+      - fee
+      - loan
+      - reward

@@ -1,0 +1,40 @@
+name: wrong-order-interest
+property:
+  - have inside code statements that update/accrue interest/exchange rate,
+  - and have inside code statements that calculate/assign/distribute the balance/share/stake/fee/loan/reward
+function_inside:
+  - interest
+  - exchange
+  - rate
+#  - balance
+#  - stake
+#  - share
+#  - loan
+only_this_function: True
+output:
+  title: "MWE-209: Wrong Order for Interest or ExchangeRate"
+  description: Update of interest or exchange rate should be executed before calculating new balance, share, stake, loan or fee.
+  recommendation: Check the business logic and move the statements about updating exchange rate or interest forward.
+static:
+  format: plain
+  multisteps: True
+  prompt:
+    - In the given code, which inside code statement is the first statement to update/accrue interest/exchange rate? Answer only ZERO or ONE statement, cover the code with backquotes.
+    - In the given code, which inside code statement is the first statement to calculate/assign/distribute the balance/share/stake/fee/loan/reward? Answer only ZERO or ONE statement, cover the code with backquotes.
+  output_keys:  
+    - StatementsA
+    - StatementsB
+  rule:
+    name: order_first_b
+    args:
+      - StatementsB
+      - StatementsA
+  filter:
+    StatementsB:
+      - balance
+      - share
+      - stake
+      - fee
+      - loan
+      - reward
+      

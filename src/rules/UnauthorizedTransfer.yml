@@ -1,0 +1,51 @@
+name: unauthorized-transfer
+property:
+  - involve transfering token from an address different from message sender
+  - and there is no check of allowance/approval from the address owner
+# TODO may remove name filtering in the future
+functions:
+  - transfer
+  - burn
+function_inside:
+  - transfer
+function_not_inside:
+  - safeTransfer
+#TODO Post-analysis: Add back double check for Web3 77
+  - transfer(_msgSender
+  - transfer(msg.sender
+  - transfer(msgSender
+  - REGEX: require\(.*msg(\.)?(s|S)ender
+  - REGEX: (a|A)llow(ance|owed).*\.sub
+  - verifyEIP712
+  - REGEX: (validate|verify)[0-9A-Za-z_]*Sign
+  - REGEX: (if|require|assert)\(.*msg(\.)?(s|S)ender
+  - REGEX: (if|require|assert)\s*\(.*((a|A)llowance|(a|A)llowed|(a|A)pprove|(a|A)pproval)
+function_not_contain_any:
+  - ['_transfer(']
+  - ['_approve(']
+  - ['transfer amount exceeds allowance', 'TRANSFER_AMOUNT_EXCEEDS_ALLOWANCE', 'allowance[_sender]', 'allowances[sender]']
+  - ['return true']
+#function_not_contain_any_ignore_space_and_underline: True
+function_public: True
+activate:
+  "yes"
+output:
+  title: "MWE-207: Unauthorized Transfer"
+  description: The contract allows transferring tokens from an address different from the message sender without checking the approval of the address owner.
+  recommendation: Check the business logic about the transfer and add the approval check if necessary.
+static:
+  format: json
+  prompt: |
+    In this function, which variable holds the sender's address of transfer? Please answer in a section starts with "VariableA:".
+    Please answer in the following json format: {"VariableA":{"Variable name":"Description"}}
+  output_keys:
+    - VariableA
+  rule:
+    name: has_eq_check
+    args:
+      - VariableA
+      - CONSTANT: msg.sender
+  exclude_variable:
+    VariableA:
+      - msgsender
+      - msg.sender

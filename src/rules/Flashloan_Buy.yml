@@ -1,0 +1,31 @@
+name: insecure-buying-behavior
+property:
+  - buy some tokens
+  - using Uniswap/PancakeSwap APIs
+functions:
+  - buy
+function_inside:
+# Or we simply use "uniswap"?
+  - swapExactTokensForTokens
+  - swapTokensForExactTokens
+  - swapExactETHForTokens
+  - swapTokensForExactETH
+  - swapExactTokensForETH
+  - swapETHForExactTokens
+activate:
+  "yes"
+output:
+  title: "MWE-202: Insecure Token Buying Behavior"
+  description: Buying tokens via swap or AMM can be manipulated to cause sandwich attacks.
+  recommendation: Do not use swap or AMM to buy tokens.
+static:
+  format: json_single
+  prompt: |
+    The given functions use Uniswap APIs to buy or swap some tokens. Please tell me the name of the target token being swapped.
+    Please answer in the following JSON format: {"TokenName": "${the token name}"}
+  output_keys:
+    - VariableA
+  rule:
+    name: in_code
+    args:
+      - VariableA

@@ -1,0 +1,45 @@
+name: no-slippage-limit-check
+property:
+  - involve calculating swap/liquidity or adding liquidity, and there is asset exchanges or price queries,
+ #- but do not implement slippage/slip limit/minimum value check
+  - but this operation could be attacked by slippage/Sandwich Attack due to no slip limit/minimum value check
+#functions:
+#  - calculateSwap
+#  - calSwap
+#  - calculateLiquidity
+#  - calLiquidity
+#  - addLiquidity
+#  - removeLiquidity
+function_not_contain_any:
+# TODO We can do this in post-analysis filtering so that this intermediate result could be kept for fine-tunning.
+# uniswap is better than IUniswapRouterV2(uniswap) OR uniswapRouter
+# IPancakePair pair = IPancakePair(_to); in Hack-20210519-PancakeBunny
+# stableSwap3Pool.add_liquidity(amounts, 1); in 30-2021-09-yaxis
+# IPancakeRouter02 private ROUTER and ROUTER.addLiquidity in Hack-20210603-PancakeHunny
+# ICurveFi pool and pool.add_liquidity(amounts, 0); in 57-2021-11-badgerzaps
+  - ['Uniswap', 'Pancake', 'CurveFi', 'stableSwap3Pool', 'stableSwapPool', 'ROUTER.addLiquidity', 'pool.add_liquidity', 'ROUTER.removeLiquidity', 'swapExactTokensForTokens', 'addLiquidity()', 'removeLiquidity()']
+function_contain_any:
+  - ['calculateSwap', 'calSwap', 'calculateLiquidity', 'calLiquidity', 'addLiquidity', 'removeLiquidity', 'slipLimit']
+activate:
+  "yes"
+output:
+  title: "MWE-206: No Slippage Limit Check"
+  description: No slippage limit check was performed to prevent sandwich attacks.
+  recommendation: Add slippage limit check when do liquidity-related operations.
+static:
+  format: json_single
+  prompt: |
+    In this function, which variable holds the slip limit/minimum value for check? Please only answer the variable name in a section starts with "VariableA:". There may have 0 or more VariableA.
+    Please answer in the following json format: {"VariableName": "${the variable name}"}
+  output_keys:  
+    - VariableA
+  rule:
+    name: has_min_check
+    args:
+      - VariableA
+
+# https://github.com/code-423n4/2021-04-vader-findings/issues/209
+# https://github.com/code-423n4/2021-04-vader/blob/main/vader-protocol/contracts/Router.sol#L133
+#
+# If VariableA is returned as "calcSwapSlip()" and VariableB is returned as "slipLimit"
+# We just check there is an "<" or "<=" dependency between the two.

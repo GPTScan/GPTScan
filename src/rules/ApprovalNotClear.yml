@@ -1,0 +1,37 @@
+name: approval-not-clear
+property:
+  - add or check approval via require/if statements before the token transfer,
+  - and there is no clear/reset of the approval when the transfer finishes its main branch or encounters exceptions
+# not_function:
+#   - approve
+#   - _approve
+function_not_inside:
+# Web3 69 IERC1155Upgradeable(assetAddress).setApprovalForAll(vault, true);
+# - setApprovalForAll
+  - safeApprove
+#TODO below should be done in post-analysis in the future, Web3 122 26
+  - REGEX: delete\s*.*(a|A)pprov
+  - REGEX: \.(a|A)llowance\(.*>.*(a|A)mount
+  - REGEX: (a|A)mount.*<.*\.(a|A)llowance\(
+  - REGEX: (allowance|allowed|Allowance|Allowed).*=
+# - not approved to send this amount
+function_contain_any:
+  - ['approval', 'approved']
+  - ['transfer']
+activate:
+  "yes"
+output:
+  title: "MWE-203: Approval Not Revoked"
+  description: Approval is not revoked or reset after the code functionality finishes.
+  recommendation: Try to remove the approval after the code finishes its job.
+static:
+  format: plain
+  multisteps: True
+  prompt: 
+    - Which statement add or check approval via require/if statements before the token transfer? Answer only ZERO or ONE statement, cover the code with backquotes.
+  output_keys:  
+    - StatementsA
+  rule:
+    name: check_require
+    args:
+      - StatementsA

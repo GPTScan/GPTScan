@@ -1,0 +1,48 @@
+name: price-manipulation
+property:
+# - get or calculate LP token's value/price/amount/balance/liquidity
+# - calculate or get or add LP token's value/price/liquidity
+  - have code statements that get or calculate LP token's value/price
+# - based on the balanceOf calculation OR the market reserves/AMMprice/exchangeRate OR the custom token amount/balance/liquidity/totalSupply calculation
+  - based on the market reserves/AMMprice/exchangeRate OR the custom token balanceOf/totalSupply/amount/liquidity calculation
+functions:
+  # 52 https://github.com/code-423n4/2021-11-vader-findings/issues/65
+  - calculateLoss
+  - addLiquidity
+  - getLiquidity
+  - calcLiquidity
+#  - Liquidity
+#  - Balance
+#  - exchangeRate
+#  - Amount
+#  - Supply
+#  - Value
+#  - Price
+#  - AMM
+#  - Asset
+#  - burn
+function_contain_any:
+  - ['getPrice', 'getRate', 'addLiquidity', 'getLiquidity', 'calcLiquidity', 'calcValue', 'exchangeRate', 'totalSupply', 'balanceOf', 'getReserves']
+activate:
+  "yes"
+output:
+  title: "MWE-200: Insecure LP Token Value Calculation"
+  description: Liquidity token value/price can be manipulated to cause flashloan attacks.
+  recommendation: Do not use AMM pool or custom liquidity calculation to caculate LP token value/price.
+static:
+  format: json
+  prompt: |
+    In this function, which variable or function holds the market reserves/AMMprice/exchangeRate OR the custom token balanceOf/totalSupply/amount/liquidity calculation? Please answer in a section starts with "VariableA".
+    In this function, which variable holds the calculated value/price of LP token? Please answer in a section starts with "VariableB". Answer only ONE "VariableB".
+    Please answer in the following json format: {"VariableA":{"Variable name":"Description"}, "VariableB":{"Variable name":"Description"}}
+  output_keys:
+    - VariableA
+    - VariableB
+  rule:
+    name: find_data_dependency
+    args:
+      - VariableA
+      - VariableB
+  validate_description:
+    VariableB:
+      - ['price', 'value', 'reward', 'calculated amount']

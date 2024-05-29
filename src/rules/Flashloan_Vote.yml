@@ -1,0 +1,31 @@
+name: insecure-vote-calculation
+property:
+  - calculate vote amount/number
+# - but do not consider or have a check for tokens from a flash loan in a vote
+  - and this vote amount/number is from a vote weight that might be manipulated by flashloan
+#functions:
+# - Vote
+# - Weight
+function_contain_any:
+  - ['Vote']
+  - ['Weight']
+activate:
+  "yes"
+output:
+  title: "MWE-201: Insecure Vote Calculation"
+  description: Calculating vote amount can be manipulated to cause flashloan attacks.
+  recommendation: In vote calculation, add a check for tokens that may come from a flash loan.
+static:
+  format: json
+  prompt: |
+    In this function, which variable or function call holds the vote weight of user? Please answer in a section starts with "VariableA:".
+    In this function, which variable holds the vote amount/number of user? Please answer in a section starts with "VariableB:".
+    Please answer in the following json format: {"VariableA":{"Variable name":"Description"}, "VariableB":{"Variable name":"Description"}}
+  output_keys:
+    - VariableA
+    - VariableB
+  rule:
+    name: find_data_dependency
+    args:
+      - VariableA
+      - VariableB

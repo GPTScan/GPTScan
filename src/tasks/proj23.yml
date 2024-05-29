@@ -1,0 +1,6 @@
+scan_proj_23:
+    path: ./Web3Bugs/contracts/23    # path to the project
+    rules: all  # rules, can be list or string
+    output:
+        use_scan_name: True
+        with_timestamp: True
