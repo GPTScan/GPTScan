@@ -11,8 +11,6 @@ import rich
 import rich_utils
 logger = logging.getLogger(__name__)
 
-openai.api_key = OPENAI_APIS[0]
-
 console = rich.get_console()
 
 SYSTEM_MESSAGE = "You are a smart contract auditor. You will be asked questions related to code properties. You can mimic answering them in the background five times and provide me with the most frequently appearing answer. Furthermore, please strictly adhere to the output format specified in the question; there is no need to explain your answer."
@@ -38,7 +36,6 @@ class Chat:
         # logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
         # logger.info(f"Sending message: \n{message}")
         # logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-        key_id = 0
         
         self.currentSession.append({"role": "system", "content": SYSTEM_MESSAGE})
         self.currentSession.append({"role": "user", "content": message})
@@ -56,7 +53,6 @@ class Chat:
                         top_p = 1.0
                     )
                 else:
-                    openai.api_key = OPENAI_APIS[key_id]
                     response = openai.ChatCompletion.create(
                         model="gpt-3.5-turbo-0301",
                         # model="gpt-3.5-turbo-0613",
@@ -68,13 +64,8 @@ class Chat:
                     )
                 break
             except openai.error.RateLimitError as e1:
-                if key_id == len(OPENAI_APIS) - 1:
-                    key_id = 0
-                    logger.warning("Trigger rate limit error, sleep 30 sec")
-                    time.sleep(30)
-                else:
-                    key_id += 1
-                    logger.warning("Trigger rate limit error, change key")
+                logger.warning("Trigger rate limit error, sleep 30 sec")
+                time.sleep(30)
             except openai.InvalidRequestError as e2:
                 if e2.code == 'context_length_exceeded':
                     logger.error("Too long context, skip")

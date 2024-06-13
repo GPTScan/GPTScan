@@ -1,9 +1,9 @@
 import logging
 import datetime
 
-OPENAI_API_KEY = ""
+OPENAI_API_KEY = "NOT NEEDED"
 
-OPENAI_APIS = []
+OPENAI_APIS = ["NOT NEEDED"]
 
 GPT4_API = "NOT NEEDED"
 

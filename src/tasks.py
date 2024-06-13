@@ -125,8 +125,7 @@ def simple_cli():
     output_file = parser.parse_args().output
     gptkey = parser.parse_args().gptkey
 
-    global_config.OPENAI_API_KEY = gptkey
-    global_config.OPENAI_APIS.append(gptkey)
+    os.environ["OPENAI_API_KEY"] = gptkey
 
     import analyze_pipeline
     import chatgpt_api
